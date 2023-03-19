@@ -28,16 +28,21 @@ function renderTiles(world: WorldState, ctx: CanvasRenderingContext2D) {
 }
 
 function renderPlayers(world: WorldState, ctx: CanvasRenderingContext2D) {
-    world.players.forEach(player => {
-        ctx.fillStyle =  "green";
-        ctx.arc(player.tx*TW + (TW/2), player.ty*TW + (TW/2), TW/2, 0, 2*Math.PI);
+    world.players.forEach((player, idx) => {
+        ctx.beginPath();
+        ctx.strokeStyle = "LightGray";
+        ctx.strokeRect(player.tx *TW, player.ty*TH, TW, TH);
+        ctx.fillStyle = idx === 0 ? "green" : "blue";
+        ctx.arc(player.x + (TW/2), player.y + (TW/2), TW/2, 0, 2*Math.PI);
         ctx.fill();
     });
 }
 
 function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
+
     renderTiles(world, ctx);    
     renderPlayers(world, ctx);    
+
     window.requestAnimationFrame(() => {
         frame(world, ctx);
     });

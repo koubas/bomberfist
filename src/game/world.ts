@@ -1,6 +1,7 @@
 import { TileTypes } from "../enums";
 
 interface PlayerState {
+    walk: { x: number; y: number; };
     x: number;
     y: number;
     tx: number;
@@ -8,14 +9,16 @@ interface PlayerState {
 }
 
 export interface TileState {
-    type: TileTypes;    
+    type: TileTypes;
 }
 
 export interface WorldState {
+    time: number;
+    eventPointer: number;
     updating: boolean,
     players: PlayerState[],
     mapW: number;
-    mapH: number; 
+    mapH: number;
     tiles: TileState[][];
 }
 
@@ -30,17 +33,27 @@ function initTiles(map: number[][]): TileState[][] {
         }
     }
     return tiles;
-} 
+}
 
 export function init(map: number[][]): WorldState {
     const tiles = initTiles(map);
     return {
+        time: 0,
+        eventPointer: 0,
         players: [
             {
                 tx: 1,
                 ty: 1,
-                x: 0,
-                y: 0,
+                x: 32.0,
+                y: 32.0,
+                walk: { x: 0.0, y: 0.0 },
+            },
+            {
+                tx: 13,
+                ty: 13,
+                x: 13*32.0,
+                y: 13*32.0,
+                walk: { x: 0.0, y: 0.0 },
             }
         ],
         mapW: tiles.length,
