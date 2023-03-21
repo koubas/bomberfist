@@ -39,7 +39,6 @@ function renderPlayers(world: WorldState, ctx: CanvasRenderingContext2D) {
 }
 
 function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
-
     renderTiles(world, ctx);    
     renderPlayers(world, ctx);    
 
@@ -49,6 +48,7 @@ function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
 }
 
 export function startRendererLoop(world: WorldState, ctx: CanvasRenderingContext2D) {
+    ctx.setTransform(ctx.getTransform().scaleSelf(2,2));
     window.requestAnimationFrame(() => {
         frame(world, ctx);
     });
