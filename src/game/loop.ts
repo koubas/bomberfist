@@ -54,6 +54,9 @@ export function tick(world: WorldState, events: Event[]) {
                 case event.type === Events.RELEASE_LEFT:
                     player.walk.x -= -1;
                     break;
+                case event.type === Events.FIRE:
+                    placeBomb(world, player.tx, player.ty);
+                    break;
                 default:
                     throw new Error(`Unknown event: ${event.type}`);
             }
@@ -80,3 +83,14 @@ export function tick(world: WorldState, events: Event[]) {
         }
     });
 }
+export function placeBomb(world: WorldState, tx: number, ty: number) {
+    if (world.bombs.findIndex(b => (b.tx === tx && b.ty === tx)) > -1) {
+        console.log('Bomb already here!');
+        return;
+    }
+    world.bombs.push({
+        tx,
+        ty,
+    });
+}
+

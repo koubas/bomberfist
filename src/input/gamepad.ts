@@ -26,6 +26,17 @@ export function poll(events: Event[]) {
             //        console.log(pad?.axes);
             //        console.log(pad?.buttons);
 
+            if (pad?.buttons[0].pressed && !controlsActive[i]["GamepadButton"]) {
+                controlsActive[i]["GamepadButton"] = true;
+                events.push({
+                    type: Events.FIRE,
+                    player: i,
+                } as PlayerEvent);
+            }
+            if (!pad?.buttons[0].pressed && controlsActive[i]["GamepadButton"]) {
+                controlsActive[i]["GamepadButton"] = false;
+            }
+
             if ((pad?.axes[1] ?? 0) < -0.3 && !controlsActive[i]["up"]) {
                 controlsActive[i]["up"] = true;
                 events.push({

@@ -13,7 +13,7 @@ function renderTiles(world: WorldState, ctx: CanvasRenderingContext2D) {
                     ctx.fillStyle =  "white";
                     break;
                 case TileTypes.WALL:
-                    ctx.fillStyle =  "red";
+                    ctx.fillStyle =  "orange";
                     break;
                 case TileTypes.HARD_WALL:
                     ctx.fillStyle =  "gray";
@@ -38,9 +38,19 @@ function renderPlayers(world: WorldState, ctx: CanvasRenderingContext2D) {
     });
 }
 
+function renderBombs(world: WorldState, ctx: CanvasRenderingContext2D) {
+    world.bombs.forEach((bomb, idx) => {
+        ctx.beginPath();
+        ctx.fillStyle = "Black"
+        ctx.arc(bomb.tx*TW + (TW/2), bomb.ty*TW + (TW/2), TW*0.4, 0, 2*Math.PI);
+        ctx.fill();
+    });
+}
+
 function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
     renderTiles(world, ctx);    
-    renderPlayers(world, ctx);    
+    renderPlayers(world, ctx);   
+    renderBombs(world, ctx); 
 
     window.requestAnimationFrame(() => {
         frame(world, ctx);

@@ -5,8 +5,9 @@ export enum Events {
     RELEASE_DOWN = "r_dn",
     PRESS_RIGHT = "p_ri",
     RELEASE_RIGHT = "r_ri",
-    PRESS_LEFT= "p_le",
-    RELEASE_LEFT= "r_le",
+    PRESS_LEFT = "p_le",
+    RELEASE_LEFT = "r_le",
+    FIRE = "f"
 }
 
 export interface Event {
