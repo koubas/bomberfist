@@ -1,6 +1,6 @@
 import { TileTypes } from "../enums";
 import { Event, Events, PlayerEvent } from "./events";
-import { WorldState } from "./world";
+import { Blast, Bomb, WorldState } from "./world";
 
 const TICK_RATE = 80;
 
@@ -27,6 +27,7 @@ export function tick(world: WorldState, events: Event[]) {
 
         console.log(["processing:", event]);
 
+        // apply player events
         if ("player" in event) {
             let player = world.players[(event as PlayerEvent).player];
             switch (true) {
@@ -63,6 +64,7 @@ export function tick(world: WorldState, events: Event[]) {
         }
     }
 
+    // player ticks
     world.players.forEach(player => {
         if (player.walk.x !== 0.0 || player.walk.y !== 0.0) {
             // walk
@@ -82,7 +84,83 @@ export function tick(world: WorldState, events: Event[]) {
             }
         }
     });
+
+    // bomb ticks
+    world.bombs = world.bombs.reduce<Bomb[]>((result, b) => {
+        b.countdown--;
+        const pow = 4;
+        if (b.countdown < 0) {
+            world.blasts.push({
+                tx: b.tx,
+                ty: b.ty,
+                powL: pow,
+                powR: pow,
+                powU: pow,
+                powD: pow,
+            });
+        }
+        return [
+            ...result,
+            ...b.countdown < 0 ? [] : [b],
+        ];
+    }, []);
+
+    // blast ticks
+    if (world.time % 10 == 0) {
+        const newBlasts: Blast[] = [];
+        world.blasts.forEach(b => {
+            if (b.powU > 0 && world.tiles[b.tx][b.ty - 1].type === TileTypes.GROUND) {
+                b.powU--;
+                newBlasts.push({
+                    tx: b.tx,
+                    ty: b.ty - 1,
+                    powL: 0,
+                    powR: 0,
+                    powU: b.powU,
+                    powD: 0,
+                });
+            }
+            if (b.powR > 0 && world.tiles[b.tx + 1][b.ty].type === TileTypes.GROUND) {
+                b.powR--;
+                newBlasts.push({
+                    tx: b.tx + 1,
+                    ty: b.ty,
+                    powL: 0,
+                    powR: b.powR,
+                    powU: 0,
+                    powD: 0,
+                });
+            }
+            if (b.powL > 0 && world.tiles[b.tx - 1][b.ty].type === TileTypes.GROUND) {
+                b.powL--;
+                newBlasts.push({
+                    tx: b.tx - 1,
+                    ty: b.ty,
+                    powL: b.powL,
+                    powR: 0,
+                    powU: 0,
+                    powD: 0,
+                });
+            }
+            if (b.powD > 0 && world.tiles[b.tx][b.ty + 1].type === TileTypes.GROUND) {
+                b.powD--;
+                newBlasts.push({
+                    tx: b.tx,
+                    ty: b.ty + 1,
+                    powL: 0,
+                    powR: 0,
+                    powU: 0,
+                    powD: b.powD,
+                });
+            }
+            if (b.powD > 0 && b.powL > 0 && b.powR > 0 && b.powU > 0) {
+                newBlasts.push(b);
+            }
+        });
+        world.blasts = newBlasts;
+    }
 }
+
 export function placeBomb(world: WorldState, tx: number, ty: number) {
     if (world.bombs.findIndex(b => (b.tx === tx && b.ty === tx)) > -1) {
         console.log('Bomb already here!');
@@ -91,6 +169,7 @@ export function placeBomb(world: WorldState, tx: number, ty: number) {
     world.bombs.push({
         tx,
         ty,
+        countdown: 200,
     });
 }
 

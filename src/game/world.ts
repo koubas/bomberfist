@@ -16,6 +16,16 @@ export interface TileState {
 export interface Bomb {
     tx: number;
     ty: number;
+    countdown: number;
+}
+
+export interface Blast {
+    tx: number;
+    ty: number;
+    powL: number;
+    powR: number;
+    powU: number;
+    powD: number;
 }
 
 export interface WorldState {
@@ -27,6 +37,7 @@ export interface WorldState {
     mapH: number;
     tiles: TileState[][];
     bombs: Bomb[];
+    blasts: Blast[];
 }
 
 function initTiles(map: number[][]): TileState[][] {
@@ -94,6 +105,7 @@ export function init(map: number[][]): WorldState {
         mapH: tiles[0].length,
         tiles,
         bombs: [],
+        blasts: [],
         updating: false,
     };
 }
