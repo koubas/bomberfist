@@ -11,7 +11,7 @@ export function bind(events: Event[]) {
             keysDown.push(code);
             switch (code) {
                 // player 1
-                case "keye":
+                case "keyf":
                     events.push({
                         type: Events.FIRE,
                         player: 0,
@@ -80,7 +80,7 @@ export function bind(events: Event[]) {
             delete keysDown[ki];
             switch (code) {
                 // player 1
-                case "keye":
+                case "keyf":
                     break;
                 case "keyw":
                     events.push({

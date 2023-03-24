@@ -1,6 +1,6 @@
 import { TileTypes } from "../enums";
 import { Event, Events, PlayerEvent } from "./events";
-import { Blast, Bomb, WorldState } from "./world";
+import { Blast, Bomb, TileState, WorldState } from "./world";
 
 const TICK_RATE = 80;
 
@@ -97,6 +97,7 @@ export function tick(world: WorldState, events: Event[]) {
                 powR: pow,
                 powU: pow,
                 powD: pow,
+                expanded: false,
             });
         }
         return [
@@ -105,55 +106,52 @@ export function tick(world: WorldState, events: Event[]) {
         ];
     }, []);
 
-    // blast ticks
+    // blast ticks/
     if (world.time % 10 == 0) {
         const newBlasts: Blast[] = [];
         world.blasts.forEach(b => {
-            if (b.powU > 0 && world.tiles[b.tx][b.ty - 1].type === TileTypes.GROUND) {
-                b.powU--;
-                newBlasts.push({
-                    tx: b.tx,
-                    ty: b.ty - 1,
-                    powL: 0,
-                    powR: 0,
-                    powU: b.powU,
-                    powD: 0,
-                });
-            }
-            if (b.powR > 0 && world.tiles[b.tx + 1][b.ty].type === TileTypes.GROUND) {
-                b.powR--;
-                newBlasts.push({
-                    tx: b.tx + 1,
-                    ty: b.ty,
-                    powL: 0,
-                    powR: b.powR,
-                    powU: 0,
-                    powD: 0,
-                });
-            }
-            if (b.powL > 0 && world.tiles[b.tx - 1][b.ty].type === TileTypes.GROUND) {
-                b.powL--;
-                newBlasts.push({
-                    tx: b.tx - 1,
-                    ty: b.ty,
-                    powL: b.powL,
-                    powR: 0,
-                    powU: 0,
-                    powD: 0,
-                });
-            }
-            if (b.powD > 0 && world.tiles[b.tx][b.ty + 1].type === TileTypes.GROUND) {
-                b.powD--;
-                newBlasts.push({
-                    tx: b.tx,
-                    ty: b.ty + 1,
-                    powL: 0,
-                    powR: 0,
-                    powU: 0,
-                    powD: b.powD,
-                });
-            }
-            if (b.powD > 0 && b.powL > 0 && b.powR > 0 && b.powU > 0) {
+            const around: { ox: number, oy: number, powL: number, powR: number, powU: number, powD: number }[] = [
+                { ox: +1, oy: 0, powL: 0, powR: b.powR, powU: 0, powD: 0, },
+                { ox: -1, oy: 0, powL: b.powL, powR: 0, powU: 0, powD: 0, },
+                { ox: 0, oy: -1, powL: 0, powR: 0, powU: b.powU, powD: 0, },
+                { ox: 0, oy: +1, powL: 0, powR: 0, powU: 0, powD: b.powD, },
+            ];
+
+            around.forEach(a => {
+                const adjacent = world.tiles[b.tx + a.ox][b.ty + a.oy];
+                let expanded = false;
+
+                b.powL -= (a.ox < 0) ? 1 : 0;
+                b.powR -= (a.ox > 0) ? 1 : 0;
+                b.powU -= (a.oy < 0) ? 1 : 0;
+                b.powD -= (a.oy > 0) ? 1 : 0;
+
+                if (!b.expanded
+                    && (b.powL > 0 && a.ox < 0 ||
+                        b.powR > 0 && a.ox > 0 ||
+                        b.powU > 0 && a.oy < 0 ||
+                        b.powD > 0 && a.oy > 0)
+                ) {
+                    if (adjacent.type === TileTypes.WALL) {
+                        adjacent.type = TileTypes.GROUND;
+                        expanded = true;
+                    }
+
+                    if (adjacent.type === TileTypes.GROUND) {
+                        newBlasts.push({
+                            tx: b.tx + a.ox,
+                            ty: b.ty + a.oy,
+                            powL: a.powL - 1,
+                            powR: a.powR - 1,
+                            powU: a.powU - 1,
+                            powD: a.powD - 1,
+                            expanded,
+                        });
+                    }
+                }
+            });
+            b.expanded = true;
+            if (b.powD > 0 || b.powL > 0 || b.powR > 0 || b.powU > 0) {
                 newBlasts.push(b);
             }
         });

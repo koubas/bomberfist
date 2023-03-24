@@ -26,6 +26,7 @@ export interface Blast {
     powR: number;
     powU: number;
     powD: number;
+    expanded: boolean;
 }
 
 export interface WorldState {
