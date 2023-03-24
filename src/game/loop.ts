@@ -66,7 +66,7 @@ export function tick(world: WorldState, events: Event[]) {
 
     // player ticks
     world.players.forEach(player => {
-        if (player.walk.x !== 0.0 || player.walk.y !== 0.0) {
+        if (player.alive && (player.walk.x !== 0.0 || player.walk.y !== 0.0)) {
             // walk
             player.x += player.walk.x;
             player.y += player.walk.y;
@@ -106,7 +106,7 @@ export function tick(world: WorldState, events: Event[]) {
         ];
     }, []);
 
-    // blast ticks/
+    // blast ticks
     if (world.time % 10 == 0) {
         const newBlasts: Blast[] = [];
         world.blasts.forEach(b => {
@@ -118,7 +118,9 @@ export function tick(world: WorldState, events: Event[]) {
             ];
 
             around.forEach(a => {
-                const adjacent = world.tiles[b.tx + a.ox][b.ty + a.oy];
+                const atx = b.tx + a.ox;
+                const aty = b.ty + a.oy;
+                const adjacent = world.tiles[atx][aty];
                 let expanded = false;
 
                 b.powL -= (a.ox < 0) ? 1 : 0;
@@ -132,6 +134,18 @@ export function tick(world: WorldState, events: Event[]) {
                         b.powU > 0 && a.oy < 0 ||
                         b.powD > 0 && a.oy > 0)
                 ) {
+                    // hits a player?
+                    const hitPlayer = world.players.find(p => p.tx === atx && p.ty === aty);
+                    if (hitPlayer) {
+                        hitPlayer.alive = false;
+                    }
+
+                    // hits a bomb?
+                    const hitBomb = world.bombs.find(bomb => bomb.tx === atx && bomb.ty === aty);
+                    if (hitBomb) {
+                        hitBomb.countdown = 0;    
+                    }
+
                     if (adjacent.type === TileTypes.WALL) {
                         adjacent.type = TileTypes.GROUND;
                         expanded = true;
@@ -167,7 +181,7 @@ export function placeBomb(world: WorldState, tx: number, ty: number) {
     world.bombs.push({
         tx,
         ty,
-        countdown: 200,
+        countdown: 500,
     });
 }
 

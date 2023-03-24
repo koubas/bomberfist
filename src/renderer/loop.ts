@@ -32,7 +32,21 @@ function renderPlayers(world: WorldState, ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.strokeStyle = "LightGray";
         ctx.strokeRect(player.tx *TW, player.ty*TH, TW, TH);
-        ctx.fillStyle = idx === 0 ? "green" : "blue";
+
+        switch(true) {
+            case !player.alive:
+                ctx.fillStyle = "purple";
+                break;
+            case idx === 0:
+                ctx.fillStyle = "green";
+                break;
+            case idx > 0:
+                ctx.fillStyle = "blue"
+                break;     
+            default:
+                throw new Error("Invalid branch");  
+        }
+
         ctx.arc(player.x + (TW/2), player.y + (TW/2), TW/2, 0, 2*Math.PI);
         ctx.fill();
     });

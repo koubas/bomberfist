@@ -2,6 +2,7 @@ import { TileTypes } from "../enums";
 import * as random from "random-seed";
 
 interface PlayerState {
+    alive: boolean;
     walk: { x: number; y: number; };
     x: number;
     y: number;
@@ -88,6 +89,7 @@ export function init(map: number[][]): WorldState {
         eventPointer: 0,
         players: [
             {
+                alive: true,
                 tx: 1,
                 ty: 1,
                 x: 32.0,
@@ -95,6 +97,7 @@ export function init(map: number[][]): WorldState {
                 walk: { x: 0.0, y: 0.0 },
             },
             {
+                alive: true,
                 tx: 13,
                 ty: 13,
                 x: 13 * 32.0,
