@@ -52,6 +52,7 @@ export async function preloadSprites() {
     L(SpriteEnum.FIREBALL, "fireball1.gif"),
     L(SpriteEnum.BARREL, "red_barrel.gif"),
     L(SpriteEnum.CORPSE, "corpse.gif"),
+    L(SpriteEnum.BOMB, "bomb1.gif"),
   ];
   _spriteSheet = new Map(await Promise.all(loadingEntries));
 }

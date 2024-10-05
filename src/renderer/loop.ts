@@ -12,6 +12,7 @@ let floorSprite: SpriteInstance;
 let player0Sprite: SpriteInstance;
 let player1Sprite: SpriteInstance;
 let playerDeadSprite: SpriteInstance;
+let bombSprite: SpriteInstance;
 
 function renderBackground(world: WorldState, ctx: CanvasRenderingContext2D) {
   for (let y = 0; y < world.mapH; y++) {
@@ -55,18 +56,9 @@ function renderBombs(world: WorldState, ctx: CanvasRenderingContext2D) {
   world.bombs.forEach((bomb) => {
     ctx.beginPath();
     ctx.fillStyle = "Black";
-    ctx.arc(bomb.tx * TW + TW / 2, bomb.ty * TW + TW / 2, TW * 0.4, 0, 2 * Math.PI);
-    ctx.fill();
-  });
-}
-
-function renderBlasts(world: WorldState, ctx: CanvasRenderingContext2D) {
-  world.blasts.forEach((blast) => {
-    //blast.sprite.draw(ctx, blast.tx * TW, blast.ty * TH);
-    ctx.beginPath();
-    ctx.fillStyle = "Red";
-    ctx.arc(blast.tx * TW + TW / 2, blast.ty * TW + TW / 2, TW * 0.5, 0, 2 * Math.PI);
-    //    ctx.fill();
+ //   ctx.arc(bomb.tx * TW + TW / 2, bomb.ty * TW + TW / 2, TW * 0.4, 0, 2 * Math.PI);
+//    ctx.fill();
+    bombSprite.draw(ctx, bomb.tx * TW, bomb.ty * TH);
   });
 }
 
@@ -84,7 +76,6 @@ async function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
   renderTiles(world, ctx);
   renderPlayers(world, ctx);
   renderBombs(world, ctx);
-  renderBlasts(world, ctx);
   renderParticles(ctx);
   const duration = Date.now() - startTime;
 
@@ -102,6 +93,7 @@ export function startRendererLoop(world: WorldState, ctx: CanvasRenderingContext
   player0Sprite = createSpriteInstance(SpriteEnum.PLAYER_RED);
   player1Sprite = createSpriteInstance(SpriteEnum.PLAYER_BLUE);
   playerDeadSprite = createSpriteInstance(SpriteEnum.CORPSE);
+  bombSprite = createSpriteInstance(SpriteEnum.BOMB);
 
   ctx.setTransform(ctx.getTransform().scaleSelf(2, 2));
   window.requestAnimationFrame(() => {
