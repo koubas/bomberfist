@@ -8,17 +8,27 @@
   "private": true,
   "scripts": {
     "watch": "watchify src/main.ts -p [tsify] -o dist/bundle.js --debug --verbose",
-    "build": "browserify src/main.ts -p [tsify] -o dist/bundle.js --debug --verbose"
+    "serve": "browser-sync start --server '.' --files 'dist/bundle.js' --host localhost --startPath /html ---port 3000",
+    "dev": "concurrently 'npm run watch' 'npm run serve'",
+    "build": "browserify src/main.ts -p [tsify] -o dist/bundle.js --debug --verbose",
+    "lint": "prettylint --format eslint-formatter-autolinkable-stylish ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.12.0",
     "@types/node": "^18.15.3",
-    "browserify": "^17.0.0",
-    "tsify": "^5.0.4",
+    "@types/ws": "^8.5.12",
+    "prettier": "^3.3.3",
+    "prettylint": "^2.0.0",
+    "eslint-formatter-autolinkable-stylish": "^1.4.0",
+    "tsx": "^4.19.1",
     "typescript": "^5.0.2",
-    "watchify": "^4.0.0"
+    "vite": "^5.4.8"
   },
   "dependencies": {
     "@types/random-seed": "^0.3.3",
-    "random-seed": "^0.3.0"
+    "gifuct-js": "^2.1.2",
+    "npm": "^10.8.3",
+    "random-seed": "^0.3.0",
+    "ws": "^8.18.0"
   }
 }

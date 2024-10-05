@@ -1,4 +1,4 @@
-import { Events, Event, PlayerEvent } from "./game/events";
+import { Event } from "./game/events";
 import { startGameLoop } from "./game/loop";
 import { map } from "./game/map";
 import { WorldState, init } from "./game/world";
@@ -21,11 +21,22 @@ async function main() {
   const events: Event[] = [];
   const world: WorldState = init(map);
 
-  startGameLoop(world, events);
+  const wsc = new WebSocket("ws://localhost:9000");
+
+  await new Promise<void>(async (resolve) => {
+    wsc.onopen = (e) => {
+      wsc.send(JSON.stringify({ me: "player" }));
+      resolve();
+    };
+  });
+
+  //startGameLoop(world, events);
   startRendererLoop(world, ctx);
 
-  keyboard.bind(events);
-  gamepad.gamepadDetect(events);
+  keyboard.bind(events, (e) => {
+    wsc.send(JSON.stringify(e));
+  });
+  //gamepad.gamepadDetect(events);
 }
 
 main();
