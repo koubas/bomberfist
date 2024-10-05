@@ -8,48 +8,10 @@ import { SpriteInstance } from "../sprites/SpriteInstance";
 const TW = 32;
 const TH = 32;
 
-let cachedFrames = new Map<string, HTMLCanvasElement[]>();
-
 let floorSprite: SpriteInstance;
 let player0Sprite: SpriteInstance;
 let player1Sprite: SpriteInstance;
 let playerDeadSprite: SpriteInstance;
-
-async function loadAllFrames(path: string) {
-  let cache = cachedFrames.get(path);
-  if (cache) {
-    return cache;
-  }
-
-  const gifResponse = await fetch(path);
-  const gifData = parseGIF(await gifResponse.arrayBuffer());
-  const gifFrames = decompressFrames(gifData, true);
-
-  let frames: HTMLCanvasElement[] = [];
-  for (const frame of gifFrames) {
-    const { width, height } = frame.dims;
-
-    // Create a new canvas for each frame
-    const frameCanvas = document.createElement("canvas");
-    frameCanvas.width = width;
-    frameCanvas.height = height;
-
-    const frameCtx = frameCanvas.getContext("2d")!;
-
-    // Create ImageData and set pixel data
-    const imageData = frameCtx.createImageData(width, height);
-    imageData.data.set(frame.patch);
-
-    // Draw the image data onto the frame's canvas
-    frameCtx.putImageData(imageData, 0, 0);
-
-    frames.push(frameCanvas);
-  }
-
-  cachedFrames.set(path, frames);
-
-  return frames;
-}
 
 function renderBackground(world: WorldState, ctx: CanvasRenderingContext2D) {
   for (let y = 0; y < world.mapH; y++) {
