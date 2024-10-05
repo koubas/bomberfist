@@ -54,10 +54,6 @@ function renderPlayers(world: WorldState, ctx: CanvasRenderingContext2D) {
 
 function renderBombs(world: WorldState, ctx: CanvasRenderingContext2D) {
   world.bombs.forEach((bomb) => {
-    ctx.beginPath();
-    ctx.fillStyle = "Black";
- //   ctx.arc(bomb.tx * TW + TW / 2, bomb.ty * TW + TW / 2, TW * 0.4, 0, 2 * Math.PI);
-//    ctx.fill();
     bombSprite.draw(ctx, bomb.tx * TW, bomb.ty * TH);
   });
 }
@@ -74,8 +70,8 @@ async function frame(world: WorldState, ctx: CanvasRenderingContext2D) {
   const startTime = Date.now();
   renderBackground(world, ctx);
   renderTiles(world, ctx);
-  renderPlayers(world, ctx);
   renderBombs(world, ctx);
+  renderPlayers(world, ctx);
   renderParticles(ctx);
   const duration = Date.now() - startTime;
 

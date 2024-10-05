@@ -88,6 +88,22 @@ export function tick(world: WorldState, events: Event[]) {
       ) {
         player.y = player.ty * 32;
       }
+
+      // bomb colisions
+      for (const b of world.bombs) {
+        if ( player.x + 32  === b.tx * 32 && player.ty === b.ty) {
+          player.x = player.x - 1;
+        }
+        if (player.x -32 === b.tx * 32 && player.ty === b.ty) {
+          player.x = player.x + 1;
+        }
+        if (player.y + 32  === b.ty * 32 && player.tx === b.tx) {
+          player.y = player.y - 1;
+        }
+        if (player.y -32 === b.ty * 32 && player.tx === b.tx) {
+          player.y = player.y + 1;
+        }
+      }
     }
   });
 
